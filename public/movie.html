@@ -7,52 +7,178 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body, html {
-            background-color: #000000; /* Sayfanın geri kalanının arka plan rengini siyah yap */
-            color: #ffffff; /* Metin rengini beyaz yap */
+            background-color: #000000;
+            color: #ffffff;
             height: 100%;
             margin: 0;
         }
-
         .navbar-custom {
             background-color: #121212;
             padding: 4px 0;
         }
-
         .navbar-brand, .nav-link {
             color: #ffffff !important;
         }
-
         .navbar-toggler-icon {
             filter: invert(100%);
         }
-
+        .navbar-brand img {
+            height: 30px;
+            margin-left: 20px;
+        }
+        .search-container {
+            position: relative;
+            margin-right: 1100px;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            color: #000000;
+            z-index: 1000;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .search-result-header {
+            display: flex;
+            align-items: center;
+        }
+        .search-result-header img {
+            height: 60px;
+            width: 60px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .search-result-actors {
+            display: flex;
+            margin-top: 10px;
+        }
+        .search-result-actor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .search-result-actor img {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .search-result-actor span {
+            font-size: 12px;
+            text-align: center;
+        }
+        .search-result-item:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
         .content-container {
             margin: 20px;
         }
-
         .movie-title {
             font-size: 36px;
             font-weight: bold;
+            margin-bottom: 20px;
         }
-
+        .movie-image {
+            width: 278.27px;
+            height: 414.68px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
         .movie-description {
             margin-top: 20px;
+            margin-bottom: 40px;
         }
-
         .actors-section {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
         }
-
-        .actors-section img {
-            width: 50px;
-            height: 50px;
+        .actor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        .actor img {
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 50%;
-            margin-right: 10px;
         }
-
-        .actors-section span {
-            margin-right: 20px;
+        .actor span {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .movie-content {
+            display: flex;
+            justify-content: space-between;
+        }
+        .trailer-section {
+            margin-left: 20px;
+        }
+        .trailer-section iframe {
+            width: 700px;
+            height: 414.68px;
+        }
+        .popularity-section {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .popularity-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .popularity-score {
+            font-size: 24px;
+        }
+        .actors-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .watchlist-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .watchlist-button.added {
+            background-color: #28a745;
+        }
+        .rating-section {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .rating-section select {
+            margin-left: 10px;
+            background-color: #121212;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 5px;
         }
     </style>
 </head>
@@ -61,16 +187,55 @@
         <a class="navbar-brand" href="/">
             <img src="images/logo.png" alt="Logo">
         </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="form-inline ml-auto search-container">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput" onkeyup="showSuggestions(this.value)">
+                <div class="search-results" id="searchResults"></div>
+            </form>
+            <div class="ml-auto">
+                <select class="form-control" id="languageSelector">
+                    <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                </select>
+            </div>
+        </div>
     </nav>
 
     <div class="container content-container">
         <div class="movie-title" id="movieTitle"></div>
-        <div class="movie-description" id="movieDescription"></div>
-        <div class="actors-section" id="actorsSection"></div>
-        <div class="trailer-section mt-4">
-            <h4>Trailer</h4>
-            <iframe id="movieTrailer" width="100%" height="480" frameborder="0" allowfullscreen></iframe>
+        <div class="movie-content">
+            <img id="movieImage" class="movie-image" alt="Movie Image">
+            <div class="trailer-section">
+                <iframe id="movieTrailer" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="popularity-section">
+                <div class="popularity-title" id="popularityTitle">Popularity</div>
+                <div id="popularityScore" class="popularity-score"></div>
+                <button id="watchlistButton" class="watchlist-button">Add to Watchlist</button>
+                <div class="rating-section">
+                    <label for="ratingSelect">Rate this movie:</label>
+                    <select id="ratingSelect">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                    <button id="rateButton" class="btn btn-primary ml-2">Submit Rating</button>
+                </div>
+            </div>
         </div>
+        <div class="movie-description" id="movieDescription"></div>
+        <div class="actors-title" id="actorsTitle">Actors</div>
+        <div class="actors-section" id="actorsSection"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -80,34 +245,205 @@
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             const movieId = urlParams.get('id');
+            const languageSelector = document.getElementById('languageSelector');
+            const watchlistButton = document.getElementById('watchlistButton');
+            const ratingSelect = document.getElementById('ratingSelect');
+            const rateButton = document.getElementById('rateButton');
 
-            fetch(`/api/movie/${movieId}`)
-                .then(response => response.json())
-                .then(movie => {
-                    document.getElementById('movieTitle').textContent = movie.name;
-                    document.getElementById('movieDescription').textContent = movie.desc_english;
+            function fetchMovieDetails(lang) {
+                fetch(`/api/movie/${movieId}`)
+                    .then(response => response.json())
+                    .then(movie => {
+                        document.getElementById('movieTitle').textContent = movie.name;
+                        document.getElementById('movieDescription').textContent = lang === 'tr' ? movie.desc_turkish : movie.desc_english;
+                        document.getElementById('movieImage').src = movie.image;
 
-                    const actorsSection = document.getElementById('actorsSection');
-                    if (movie.actor1_name) {
-                        actorsSection.innerHTML += `<div><img src="${movie.actor1_photo}" alt="${movie.actor1_name}"><span>${movie.actor1_name}</span></div>`;
-                    }
-                    if (movie.actor2_name) {
-                        actorsSection.innerHTML += `<div><img src="${movie.actor2_photo}" alt="${movie.actor2_name}"><span>${movie.actor2_name}</span></div>`;
-                    }
-                    if (movie.actor3_name) {
-                        actorsSection.innerHTML += `<div><img src="${movie.actor3_photo}" alt="${movie.actor3_name}"><span>${movie.actor3_name}</span></div>`;
-                    }
-                    if (movie.actor4_name) {
-                        actorsSection.innerHTML += `<div><img src="${movie.actor4_photo}" alt="${movie.actor4_name}"><span>${movie.actor4_name}</span></div>`;
-                    }
-                    if (movie.actor5_name) {
-                        actorsSection.innerHTML += `<div><img src="${movie.actor5_photo}" alt="${movie.actor5_name}"><span>${movie.actor5_name}</span></div>`;
-                    }
+                        const popularityScore = movie.id + " / 10";
+                        document.getElementById('popularityScore').textContent = popularityScore;
 
-                    const youtubeId = movie.trailer.split('v=')[1] || movie.trailer.split('/').pop();
-                    const trailerUrl = `https://www.youtube.com/embed/${youtubeId}`;
-                    document.getElementById('movieTrailer').src = trailerUrl;
-                });
+                        const actorsSection = document.getElementById('actorsSection');
+                        actorsSection.innerHTML = '';
+                        if (movie.actor1_name) {
+                            actorsSection.innerHTML += `<div class="actor"><img src="${movie.actor1_photo}" alt="${movie.actor1_name}"><span>${movie.actor1_name}</span></div>`;
+                        }
+                        if (movie.actor2_name) {
+                            actorsSection.innerHTML += `<div class="actor"><img src="${movie.actor2_photo}" alt="${movie.actor2_name}"><span>${movie.actor2_name}</span></div>`;
+                        }
+                        if (movie.actor3_name) {
+                            actorsSection.innerHTML += `<div class="actor"><img src="${movie.actor3_photo}" alt="${movie.actor3_name}"><span>${movie.actor3_name}</span></div>`;
+                        }
+                        if (movie.actor4_name) {
+                            actorsSection.innerHTML += `<div class="actor"><img src="${movie.actor4_photo}" alt="${movie.actor4_name}"><span>${movie.actor4_name}</span></div>`;
+                        }
+                        if (movie.actor5_name) {
+                            actorsSection.innerHTML += `<div class="actor"><img src="${movie.actor5_photo}" alt="${movie.actor5_name}"><span>${movie.actor5_name}</span></div>`;
+                        }
+
+                        const youtubeId = movie.trailer.split('v=')[1] || movie.trailer.split('/').pop();
+                        const trailerUrl = `https://www.youtube.com/embed/${youtubeId}`;
+                        document.getElementById('movieTrailer').src = trailerUrl;
+
+                        if (lang === 'tr') {
+                            document.getElementById('actorsTitle').textContent = 'Oyuncular';
+                            document.getElementById('popularityTitle').textContent = 'Popülarite';
+                        } else {
+                            document.getElementById('actorsTitle').textContent = 'Actors';
+                            document.getElementById('popularityTitle').textContent = 'Popularity';
+                        }
+
+                        checkWatchlistStatus(movieId);
+                        checkRatingStatus(movieId);
+                    });
+            }
+
+            function checkWatchlistStatus(movieId) {
+                fetch('/api/checkLogin')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.loggedIn) {
+                            fetch(`/api/watchlist?movieId=${movieId}`)
+                                .then(response => response.json())
+                                .then(watchlistData => {
+                                    if (watchlistData.inWatchlist) {
+                                        watchlistButton.textContent = 'Remove from Watchlist';
+                                        watchlistButton.classList.add('added');
+                                    }
+                                });
+                        }
+                    });
+            }
+
+            function checkRatingStatus(movieId) {
+                fetch('/api/checkLogin')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.loggedIn) {
+                            fetch(`/api/rating?movieId=${movieId}`)
+                                .then(response => response.json())
+                                .then(ratingData => {
+                                    if (ratingData && ratingData.rating) {
+                                        ratingSelect.value = ratingData.rating;
+                                    }
+                                });
+                        }
+                    });
+            }
+
+            function updateWatchlistStatus(movieId) {
+                fetch('/api/checkLogin')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.loggedIn) {
+                            window.location.href = '/login.html';
+                        } else {
+                            fetch(`/api/watchlist/toggle`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ movieId: movieId })
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.added) {
+                                    watchlistButton.textContent = 'Remove from Watchlist';
+                                    watchlistButton.classList.add('added');
+                                } else {
+                                    watchlistButton.textContent = 'Add to Watchlist';
+                                    watchlistButton.classList.remove('added');
+                                }
+                            });
+                        }
+                    });
+            }
+
+            function submitRating(movieId, rating) {
+                fetch('/api/checkLogin')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.loggedIn) {
+                            window.location.href = '/login.html';
+                        } else {
+                            fetch('/api/rate', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ movieId: movieId, rating: rating })
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    alert('Rating submitted successfully.');
+                                } else {
+                                    alert('Failed to submit rating.');
+                                }
+                            });
+                        }
+                    });
+            }
+
+            fetchMovieDetails(languageSelector.value);
+
+            languageSelector.addEventListener('change', function() {
+                fetchMovieDetails(this.value);
+            });
+
+            watchlistButton.addEventListener('click', function() {
+                updateWatchlistStatus(movieId);
+            });
+
+            rateButton.addEventListener('click', function() {
+                const rating = ratingSelect.value;
+                submitRating(movieId, rating);
+            });
+
+            function showSuggestions(value) {
+                if (value.length < 3) {
+                    document.getElementById('searchResults').style.display = 'none';
+                    return;
+                }
+
+                fetch(`/api/search?query=${value}`)
+                    .then(response => response.json())
+                    .then(results => {
+                        const searchResults = document.getElementById('searchResults');
+                        searchResults.innerHTML = '';
+
+                        if (results.length === 0) {
+                            searchResults.style.display = 'none';
+                            return;
+                        }
+
+                        results.forEach(result => {
+                            const item = document.createElement('div');
+                            item.className = 'search-result-item';
+                            item.innerHTML = `
+                                <div class="search-result-header">
+                                    <img src="${result.image}" alt="Film Image">
+                                    <span>${result.name}</span>
+                                </div>
+                                <div class="search-result-actors">
+                                    ${result.actor1_name ? `<div class="search-result-actor"><img src="${result.actor1_photo}" alt="${result.actor1_name}"><span>${result.actor1_name}</span></div>` : ''}
+                                    ${result.actor2_name ? `<div class="search-result-actor"><img src="${result.actor2_photo}" alt="${result.actor2_name}"><span>${result.actor2_name}</span></div>` : ''}
+                                    ${result.actor3_name ? `<div class="search-result-actor"><img src="${result.actor3_photo}" alt="${result.actor3_name}"><span>${result.actor3_name}</span></div>` : ''}
+                                    ${result.actor4_name ? `<div class="search-result-actor"><img src="${result.actor4_photo}" alt="${result.actor4_name}"><span>${result.actor4_name}</span></div>` : ''}
+                                    ${result.actor5_name ? `<div class="search-result-actor"><img src="${result.actor5_photo}" alt="${result.actor5_name}"><span>${result.actor5_name}</span></div>` : ''}
+                                </div>
+                            `;
+                            item.onclick = () => {
+                                window.location.href = `movie.html?id=${result.id}`;
+                            };
+                            searchResults.appendChild(item);
+                        });
+
+                        searchResults.style.display = 'block';
+                    });
+            }
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                showSuggestions(this.value);
+            });
         });
     </script>
 </body>

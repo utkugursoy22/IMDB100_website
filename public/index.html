@@ -21,12 +21,12 @@
 
         .navbar-brand img {
             height: 30px;
-            margin-left: 20px; /* Logoyu sağa kaydırmak için */
+            margin-left: 20px; 
         }
 
         .search-container {
             position: relative;
-            margin-right: 1100px; /* Search bar'ın logodan az bir boşlukla başlamasını sağlamak için */
+            margin-right: 1100px;
         }
 
         .language-selector {
@@ -43,9 +43,9 @@
             color: #000000;
             z-index: 1000;
             border: 1px solid #ddd;
-            max-height: 300px; /* Yüksekliği artırıldı */
+            max-height: 300px; 
             overflow-y: auto;
-            display: none; /* Başlangıçta gizli */
+            display: none; 
         }
 
         .search-result-item {
@@ -63,8 +63,8 @@
         }
 
         .search-result-header img {
-            height: 60px; /* Boyut artırıldı */
-            width: 60px; /* Boyut artırıldı */
+            height: 60px;
+            width: 60px; 
             object-fit: cover;
             margin-right: 10px;
         }
@@ -82,8 +82,8 @@
         }
 
         .search-result-actor img {
-            height: 50px; /* Boyut artırıldı */
-            width: 50px; /* Boyut artırıldı */
+            height: 50px;
+            width: 50px; 
             object-fit: cover;
             border-radius: 50%;
         }
@@ -99,8 +99,8 @@
         }
 
         body, html {
-            background-color: #000000; /* Sayfanın geri kalanının arka plan rengini siyah yap */
-            color: #ffffff; /* Metin rengini beyaz yap */
+            background-color: #000000; 
+            color: #ffffff; 
             height: 100%;
             margin: 0;
         }
@@ -121,7 +121,7 @@
             display: inline-block;
             width: 4px;
             height: 100%;
-            background-color: #FFD700; /* Sarı dikey çizgi */
+            background-color: #FFD700; 
             margin-right: 10px;
         }
 
@@ -129,7 +129,7 @@
             position: relative;
             width: 100%;
             overflow: hidden;
-            margin-top: 20px; /* Başlık metni ile film kutuları arasında boşluk */
+            margin-top: 20px; 
         }
 
         .movie-container {
@@ -190,6 +190,11 @@
             line-height: 36px;
         }
 
+        .movie-box .actions .watchlist.added {
+            background-color: #28a745;
+            color: #ffffff; 
+        }
+
         .movie-box .actions .trailer {
             color: #ffffff;
             background-color: #000000;
@@ -216,6 +221,19 @@
         .slider-button.right {
             right: 0;
         }
+
+        .nav-link.login-button {
+            color: #ffffff !important;
+            background-color: #007bff;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        .nav-link.login-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -227,14 +245,15 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <form class="form-inline ml-auto search-container">
+            <form class="form-inline ml-auto search-container" onsubmit="handleSearch(event)">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput" onkeyup="showSuggestions(this.value)">
                 <div class="search-results" id="searchResults"></div>
             </form>
+            <a class="nav-link login-button" id="loginLink" href="/login.html">Log In</a>
             <div class="ml-auto language-selector">
                 <select id="languageSelect" onchange="changeLanguage()">
-                    <option value="en">English</option>
-                    <option value="tr">Türkçe</option>
+                    <option value="en">EN</option>
+                    <option value="tr">TR</option>
                 </select>
             </div>
         </div>
@@ -248,7 +267,7 @@
         <div class="slider">
             <button class="slider-button left" onclick="slide('left')">&lt;</button>
             <div class="movie-container" id="movieContainer">
-                <!-- Film kutuları burada görünecek -->
+            
             </div>
             <button class="slider-button right" onclick="slide('right')">&gt;</button>
         </div>
@@ -258,98 +277,127 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-       document.addEventListener("DOMContentLoaded", function() {
-    fetch('/api/movies')
-        .then(response => response.json())
-        .then(movies => {
-            const movieContainer = document.getElementById('movieContainer');
-            movies.forEach(movie => {
-                const movieBox = document.createElement('div');
-                movieBox.className = 'movie-box';
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/api/movies')
+                .then(response => response.json())
+                .then(movies => {
+                    const movieContainer = document.getElementById('movieContainer');
+                    movies.forEach(movie => {
+                        const movieBox = document.createElement('div');
+                        movieBox.className = 'movie-box';
 
-                const movieImage = document.createElement('img');
-                movieImage.src = movie.image; // Veritabanından gelen image linki
-                movieImage.onclick = () => {
-                    window.location.href = `/movie.html?id=${movie.id}`;
-                };
+                        const movieImage = document.createElement('img');
+                        movieImage.src = movie.image; 
+                        movieImage.onclick = () => {
+                            window.location.href = `/movie.html?id=${movie.id}`;
+                        };
 
-                const rating = document.createElement('div');
-                rating.className = 'rating';
-                rating.textContent = movie.rating; // Veritabanından gelen rating
+                        const rating = document.createElement('div');
+                        rating.className = 'rating';
+                        rating.textContent = movie.rating; 
 
-                const name = document.createElement('div');
-                name.className = 'name';
-                name.textContent = movie.name; // Veritabanından gelen film adı
+                        const name = document.createElement('div');
+                        name.className = 'name';
+                        name.textContent = `${movie.id}. ${movie.name}`; 
 
-                const actions = document.createElement('div');
-                actions.className = 'actions';
+                        const actions = document.createElement('div');
+                        actions.className = 'actions';
 
-                const watchlistLink = document.createElement('a');
-                watchlistLink.className = 'watchlist';
-                watchlistLink.textContent = '+ Watchlist';
-                // Watchlist'e ekleme işlevselliği burada tanımlanacak (detaylar sonra anlatılacak)
+                        const watchlistLink = document.createElement('a');
+                        watchlistLink.className = 'watchlist';
+                        watchlistLink.textContent = '+ Watchlist';
+                        watchlistLink.href = '#';
+                        watchlistLink.onclick = (event) => {
+                            event.preventDefault();
+                            handleWatchlistClick(movie.id, watchlistLink);
+                        };
 
-                const trailerLink = document.createElement('a');
-                trailerLink.className = 'trailer';
-                trailerLink.textContent = 'Trailer';
-                trailerLink.href = movie.trailer; // Veritabanından gelen trailer linki
-                trailerLink.target = '_blank';
+                        fetch('/api/checkWatchlist?movieId=' + movie.id)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.inWatchlist) {
+                                    watchlistLink.classList.add('added');
+                                }
+                            });
 
-                actions.appendChild(watchlistLink);
-                actions.appendChild(trailerLink);
+                        const trailerLink = document.createElement('a');
+                        trailerLink.className = 'trailer';
+                        trailerLink.textContent = 'Trailer';
+                        trailerLink.href = movie.trailer;
+                        trailerLink.target = '_blank';
 
-                movieBox.appendChild(movieImage);
-                movieBox.appendChild(rating);
-                movieBox.appendChild(name);
-                movieBox.appendChild(actions);
+                        actions.appendChild(watchlistLink);
+                        actions.appendChild(trailerLink);
 
-                movieContainer.appendChild(movieBox);
-            });
+                        movieBox.appendChild(movieImage);
+                        movieBox.appendChild(rating);
+                        movieBox.appendChild(name);
+                        movieBox.appendChild(actions);
+
+                        movieContainer.appendChild(movieBox);
+                    });
+                });
+
+            fetch('/api/checkLogin')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.loggedIn) {
+                        const loginLink = document.getElementById('loginLink');
+                        loginLink.textContent = data.name;
+                        loginLink.href = '#';
+                    }
+                });
         });
-});
 
-function showSuggestions(value) {
-    if (value.length < 3) {
-        document.getElementById('searchResults').style.display = 'none';
-        return;
-    }
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            window.location.href = `search.html?query=${query}`;
+        }
 
-    fetch(`/api/search?query=${value}`)
-        .then(response => response.json())
-        .then(results => {
-            const searchResults = document.getElementById('searchResults');
-            searchResults.innerHTML = '';
-
-            if (results.length === 0) {
-                searchResults.style.display = 'none';
+        function showSuggestions(value) {
+            if (value.length < 3) {
+                document.getElementById('searchResults').style.display = 'none';
                 return;
             }
 
-            results.forEach(result => {
-                const item = document.createElement('div');
-                item.className = 'search-result-item';
-                item.innerHTML = `
-                    <div class="search-result-header">
-                        <img src="${result.image}" alt="Film Image">
-                        <span>${result.name}</span>
-                    </div>
-                    <div class="search-result-actors">
-                        ${result.actor1_name ? `<div class="search-result-actor"><img src="${result.actor1_photo}" alt="${result.actor1_name}"><span>${result.actor1_name}</span></div>` : ''}
-                        ${result.actor2_name ? `<div class="search-result-actor"><img src="${result.actor2_photo}" alt="${result.actor2_name}"><span>${result.actor2_name}</span></div>` : ''}
-                        ${result.actor3_name ? `<div class="search-result-actor"><img src="${result.actor3_photo}" alt="${result.actor3_name}"><span>${result.actor3_name}</span></div>` : ''}
-                        ${result.actor4_name ? `<div class="search-result-actor"><img src="${result.actor4_photo}" alt="${result.actor4_name}"><span>${result.actor4_name}</span></div>` : ''}
-                        ${result.actor5_name ? `<div class="search-result-actor"><img src="${result.actor5_photo}" alt="${result.actor5_name}"><span>${result.actor5_name}</span></div>` : ''}
-                    </div>
-                `;
-                item.onclick = () => {
-                    window.location.href = `/movie.html?id=${result.id}`;
-                };
-                searchResults.appendChild(item);
-            });
+            fetch(`/api/search?query=${value}`)
+                .then(response => response.json())
+                .then(results => {
+                    const searchResults = document.getElementById('searchResults');
+                    searchResults.innerHTML = '';
 
-            searchResults.style.display = 'block';
-        });
-}
+                    if (results.length === 0) {
+                        searchResults.style.display = 'none';
+                        return;
+                    }
+
+                    results.forEach(result => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.innerHTML = `
+                            <div class="search-result-header">
+                                <img src="${result.image}" alt="Film Image">
+                                <span>${result.name}</span>
+                            </div>
+                            <div class="search-result-actors">
+                                ${result.actor1_name ? `<div class="search-result-actor"><img src="${result.actor1_photo}" alt="${result.actor1_name}"><span>${result.actor1_name}</span></div>` : ''}
+                                ${result.actor2_name ? `<div class="search-result-actor"><img src="${result.actor2_photo}" alt="${result.actor2_name}"><span>${result.actor2_name}</span></div>` : ''}
+                                ${result.actor3_name ? `<div class="search-result-actor"><img src="${result.actor3_photo}" alt="${result.actor3_name}"><span>${result.actor3_name}</span></div>` : ''}
+                                ${result.actor4_name ? `<div class="search-result-actor"><img src="${result.actor4_photo}" alt="${result.actor4_name}"><span>${result.actor4_name}</span></div>` : ''}
+                                ${result.actor5_name ? `<div class="search-result-actor"><img src="${result.actor5_photo}" alt="${result.actor5_name}"><span>${result.actor5_name}</span></div>` : ''}
+                            </div>
+                        `;
+                        item.onclick = () => {
+                            window.location.href = `/movie.html?id=${result.id}`;
+                        };
+                        searchResults.appendChild(item);
+                    });
+
+                    searchResults.style.display = 'block';
+                });
+        }
+
         function changeLanguage() {
             const lang = document.getElementById('languageSelect').value;
             const titleSection = document.getElementById('titleSection');
@@ -365,8 +413,7 @@ function showSuggestions(value) {
         function slide(direction) {
             const movieContainer = document.getElementById('movieContainer');
             const containerWidth = movieContainer.clientWidth;
-            const scrollDistance = 800; // Kaydırma mesafesi artırıldı
-
+            const scrollDistance = 800; 
             if (direction === 'left') {
                 scrollAmount = Math.max(scrollAmount - scrollDistance, 0);
             } else if (direction === 'right') {
@@ -374,6 +421,32 @@ function showSuggestions(value) {
             }
 
             movieContainer.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+
+        function handleWatchlistClick(movieId, watchlistLink) {
+            fetch('/api/checkLogin')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.loggedIn) {
+                        window.location.href = '/login.html';
+                    } else {
+                        fetch('/api/addToWatchlist', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ movieId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                watchlistLink.classList.add('added');
+                            } else {
+                                alert('Failed to add to watchlist.');
+                            }
+                        });
+                    }
+                });
         }
     </script>
 </body>

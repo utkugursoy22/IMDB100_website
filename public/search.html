@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            background-color: #000000; 
+            color: #ffffff; 
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        }
+
+        .navbar-custom {
+            background-color: #121212;
+            padding: 4px 0;
+        }
+
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(100%);
+        }
+
+        .navbar-brand img {
+            height: 30px;
+            margin-left: 20px; 
+        }
+
+        .search-container {
+            position: relative;
+            margin-right: 1100px; 
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            color: #000000;
+            z-index: 1000;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none; 
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-result-header img {
+            height: 60px; 
+            width: 60px; 
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .search-result-actors {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .search-result-actor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .search-result-actor img {
+            height: 50px; 
+            width: 50px; 
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .search-result-actor span {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .search-result-item:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 5px;
+        }
+
+        .search-result {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .search-result img {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+
+        .search-result .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-result .info span {
+            font-size: 20px;
+        }
+
+        .search-result:hover {
+            background-color: #333333;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="form-inline ml-auto search-container" onsubmit="handleSearch(event)">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput" onkeyup="showSuggestions(this.value)">
+                <div class="search-results" id="searchResults"></div>
+            </form>
+            <div class="ml-auto language-selector">
+                <select class="custom-select" id="languageSelect" onchange="changeLanguage()">
+                    <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="section-title">Titles</div>
+        <div id="titlesSection"></div>
+
+        <div class="section-title">People</div>
+        <div id="peopleSection"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('query');
+            document.getElementById('searchInput').value = query;
+            
+            fetch(`/api/search?query=${query}`)
+                .then(response => response.json())
+                .then(results => {
+                    const titlesSection = document.getElementById('titlesSection');
+                    const peopleSection = document.getElementById('peopleSection');
+
+                    results.forEach(result => {
+                        const titleItem = document.createElement('div');
+                        titleItem.className = 'search-result';
+                        titleItem.innerHTML = `
+                            <img src="${result.image}" alt="${result.name}">
+                            <div class="info">
+                                <span>${result.name}</span>
+                            </div>
+                        `;
+                        titleItem.onclick = () => {
+                            window.location.href = `movie.html?id=${result.id}`;
+                        };
+                        titlesSection.appendChild(titleItem);
+
+                        result.actors.forEach(actor => {
+                            const actorItem = document.createElement('div');
+                            actorItem.className = 'search-result';
+                            actorItem.innerHTML = `
+                                <img src="${actor.photo}" alt="${actor.name}">
+                                <div class="info">
+                                    <span>${actor.name}</span>
+                                </div>
+                            `;
+                            actorItem.onclick = () => {
+                                window.location.href = `movie.html?id=${result.id}`;
+                            };
+                            peopleSection.appendChild(actorItem);
+                        });
+                    });
+                });
+        });
+
+        function showSuggestions(value) {
+            if (value.length < 3) {
+                document.getElementById('searchResults').style.display = 'none';
+                return;
+            }
+
+            fetch(`/api/search?query=${value}`)
+                .then(response => response.json())
+                .then(results => {
+                    const searchResults = document.getElementById('searchResults');
+                    searchResults.innerHTML = '';
+
+                    if (results.length === 0) {
+                        searchResults.style.display = 'none';
+                        return;
+                    }
+
+                    results.forEach(result => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.innerHTML = `
+                            <div class="search-result-header">
+                                <img src="${result.image}" alt="Film Image">
+                                <span>${result.name}</span>
+                            </div>
+                            <div class="search-result-actors">
+                                ${result.actor1_name ? `<div class="search-result-actor"><img src="${result.actor1_photo}" alt="${result.actor1_name}"><span>${result.actor1_name}</span></div>` : ''}
+                                ${result.actor2_name ? `<div class="search-result-actor"><img src="${result.actor2_photo}" alt="${result.actor2_name}"><span>${result.actor2_name}</span></div>` : ''}
+                                ${result.actor3_name ? `<div class="search-result-actor"><img src="${result.actor3_photo}" alt="${result.actor3_name}"><span>${result.actor3_name}</span></div>` : ''}
+                                ${result.actor4_name ? `<div class="search-result-actor"><img src="${result.actor4_photo}" alt="${result.actor4_name}"><span>${result.actor4_name}</span></div>` : ''}
+                                ${result.actor5_name ? `<div class="search-result-actor"><img src="${result.actor5_photo}" alt="${result.actor5_name}"><span>${result.actor5_name}</span></div>` : ''}
+                            </div>
+                        `;
+                        item.onclick = () => {
+                            window.location.href = `movie.html?id=${result.id}`;
+                        };
+                        searchResults.appendChild(item);
+                    });
+
+                    searchResults.style.display = 'block';
+                });
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            window.location.href = `search.html?query=${query}`;
+        }
+
+       
+    </script>
+</body>
+</html>
