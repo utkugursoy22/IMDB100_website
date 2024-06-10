@@ -84,3 +84,6 @@ Database Design:
 
 Designing the database schema to support multiple features (user management, movie details, watchlist, and ratings) while ensuring data integrity and efficiency required thoughtful planning.
 Ensuring that database queries were optimized and that relationships between tables (e.g., users and movies through ratings and watchlists) were correctly implemented was crucial for performance.
+
+
+GOOGLE DRIVE LINK: https://drive.google.com/file/d/17owJAjD_h6U19eaQ4tl6zUfff7FoKys4/view?usp=drive_link
