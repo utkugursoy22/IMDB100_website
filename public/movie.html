@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Detayı</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            background-color: #000000; /* Sayfanın geri kalanının arka plan rengini siyah yap */
+            color: #ffffff; /* Metin rengini beyaz yap */
+            height: 100%;
+            margin: 0;
+        }
+
+        .navbar-custom {
+            background-color: #121212;
+            padding: 4px 0;
+        }
+
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(100%);
+        }
+
+        .content-container {
+            margin: 20px;
+        }
+
+        .movie-title {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .movie-description {
+            margin-top: 20px;
+        }
+
+        .actors-section {
+            margin-top: 20px;
+        }
+
+        .actors-section img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .actors-section span {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" alt="Logo">
+        </a>
+    </nav>
+
+    <div class="container content-container">
+        <div class="movie-title" id="movieTitle"></div>
+        <div class="movie-description" id="movieDescription"></div>
+        <div class="actors-section" id="actorsSection"></div>
+        <div class="trailer-section mt-4">
+            <h4>Trailer</h4>
+            <iframe id="movieTrailer" width="100%" height="480" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id');
+
+            fetch(`/api/movie/${movieId}`)
+                .then(response => response.json())
+                .then(movie => {
+                    document.getElementById('movieTitle').textContent = movie.name;
+                    document.getElementById('movieDescription').textContent = movie.desc_english;
+
+                    const actorsSection = document.getElementById('actorsSection');
+                    if (movie.actor1_name) {
+                        actorsSection.innerHTML += `<div><img src="${movie.actor1_photo}" alt="${movie.actor1_name}"><span>${movie.actor1_name}</span></div>`;
+                    }
+                    if (movie.actor2_name) {
+                        actorsSection.innerHTML += `<div><img src="${movie.actor2_photo}" alt="${movie.actor2_name}"><span>${movie.actor2_name}</span></div>`;
+                    }
+                    if (movie.actor3_name) {
+                        actorsSection.innerHTML += `<div><img src="${movie.actor3_photo}" alt="${movie.actor3_name}"><span>${movie.actor3_name}</span></div>`;
+                    }
+                    if (movie.actor4_name) {
+                        actorsSection.innerHTML += `<div><img src="${movie.actor4_photo}" alt="${movie.actor4_name}"><span>${movie.actor4_name}</span></div>`;
+                    }
+                    if (movie.actor5_name) {
+                        actorsSection.innerHTML += `<div><img src="${movie.actor5_photo}" alt="${movie.actor5_name}"><span>${movie.actor5_name}</span></div>`;
+                    }
+
+                    const youtubeId = movie.trailer.split('v=')[1] || movie.trailer.split('/').pop();
+                    const trailerUrl = `https://www.youtube.com/embed/${youtubeId}`;
+                    document.getElementById('movieTrailer').src = trailerUrl;
+                });
+        });
+    </script>
+</body>
+</html>

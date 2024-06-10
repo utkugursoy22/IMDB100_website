@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-custom {
+            background-color: #121212;
+            padding: 4px 0;
+        }
+
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(100%);
+        }
+
+        .navbar-brand img {
+            height: 30px;
+            margin-left: 20px; /* Logoyu sağa kaydırmak için */
+        }
+
+        .search-container {
+            position: relative;
+            margin-right: 1100px; /* Search bar'ın logodan az bir boşlukla başlamasını sağlamak için */
+        }
+
+        .language-selector {
+            margin-right: 20px;
+            color: #ffffff;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            color: #000000;
+            z-index: 1000;
+            border: 1px solid #ddd;
+            max-height: 300px; /* Yüksekliği artırıldı */
+            overflow-y: auto;
+            display: none; /* Başlangıçta gizli */
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-result-header img {
+            height: 60px; /* Boyut artırıldı */
+            width: 60px; /* Boyut artırıldı */
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .search-result-actors {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .search-result-actor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .search-result-actor img {
+            height: 50px; /* Boyut artırıldı */
+            width: 50px; /* Boyut artırıldı */
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .search-result-actor span {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .search-result-item:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        body, html {
+            background-color: #000000; /* Sayfanın geri kalanının arka plan rengini siyah yap */
+            color: #ffffff; /* Metin rengini beyaz yap */
+            height: 100%;
+            margin: 0;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            height: 28.8px;
+            color: #ffffff;
+            font-size: 24px;
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 0px 0px 0px 12px;
+            margin-top: 20px;
+        }
+
+        .title-section::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 100%;
+            background-color: #FFD700; /* Sarı dikey çizgi */
+            margin-right: 10px;
+        }
+
+        .slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 20px; /* Başlık metni ile film kutuları arasında boşluk */
+        }
+
+        .movie-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .movie-box {
+            flex: 0 0 auto;
+            width: 185.33px;
+            margin-right: 15px;
+            border-radius: 15px;
+            background-color: #1a1a1a;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        .movie-box img {
+            width: 100%;
+            height: 274.27px;
+            object-fit: cover;
+        }
+
+        .movie-box .rating {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .movie-box .name {
+            height: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .movie-box .actions {
+            height: 84.4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .movie-box .actions a {
+            text-decoration: none;
+            display: block;
+            width: 169.33px;
+            text-align: center;
+            margin: 2px 0;
+        }
+
+        .movie-box .actions .watchlist {
+            color: #007bff;
+            height: 36px;
+            line-height: 36px;
+        }
+
+        .movie-box .actions .trailer {
+            color: #ffffff;
+            background-color: #000000;
+            height: 52px;
+            line-height: 52px;
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .slider-button.left {
+            left: 0;
+        }
+
+        .slider-button.right {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="form-inline ml-auto search-container">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput" onkeyup="showSuggestions(this.value)">
+                <div class="search-results" id="searchResults"></div>
+            </form>
+            <div class="ml-auto language-selector">
+                <select id="languageSelect" onchange="changeLanguage()">
+                    <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="title-section" id="titleSection">
+            Top 10 on IMDB this week
+        </div>
+
+        <div class="slider">
+            <button class="slider-button left" onclick="slide('left')">&lt;</button>
+            <div class="movie-container" id="movieContainer">
+                <!-- Film kutuları burada görünecek -->
+            </div>
+            <button class="slider-button right" onclick="slide('right')">&gt;</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+    fetch('/api/movies')
+        .then(response => response.json())
+        .then(movies => {
+            const movieContainer = document.getElementById('movieContainer');
+            movies.forEach(movie => {
+                const movieBox = document.createElement('div');
+                movieBox.className = 'movie-box';
+
+                const movieImage = document.createElement('img');
+                movieImage.src = movie.image; // Veritabanından gelen image linki
+                movieImage.onclick = () => {
+                    window.location.href = `/movie.html?id=${movie.id}`;
+                };
+
+                const rating = document.createElement('div');
+                rating.className = 'rating';
+                rating.textContent = movie.rating; // Veritabanından gelen rating
+
+                const name = document.createElement('div');
+                name.className = 'name';
+                name.textContent = movie.name; // Veritabanından gelen film adı
+
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+
+                const watchlistLink = document.createElement('a');
+                watchlistLink.className = 'watchlist';
+                watchlistLink.textContent = '+ Watchlist';
+                // Watchlist'e ekleme işlevselliği burada tanımlanacak (detaylar sonra anlatılacak)
+
+                const trailerLink = document.createElement('a');
+                trailerLink.className = 'trailer';
+                trailerLink.textContent = 'Trailer';
+                trailerLink.href = movie.trailer; // Veritabanından gelen trailer linki
+                trailerLink.target = '_blank';
+
+                actions.appendChild(watchlistLink);
+                actions.appendChild(trailerLink);
+
+                movieBox.appendChild(movieImage);
+                movieBox.appendChild(rating);
+                movieBox.appendChild(name);
+                movieBox.appendChild(actions);
+
+                movieContainer.appendChild(movieBox);
+            });
+        });
+});
+
+function showSuggestions(value) {
+    if (value.length < 3) {
+        document.getElementById('searchResults').style.display = 'none';
+        return;
+    }
+
+    fetch(`/api/search?query=${value}`)
+        .then(response => response.json())
+        .then(results => {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.innerHTML = `
+                    <div class="search-result-header">
+                        <img src="${result.image}" alt="Film Image">
+                        <span>${result.name}</span>
+                    </div>
+                    <div class="search-result-actors">
+                        ${result.actor1_name ? `<div class="search-result-actor"><img src="${result.actor1_photo}" alt="${result.actor1_name}"><span>${result.actor1_name}</span></div>` : ''}
+                        ${result.actor2_name ? `<div class="search-result-actor"><img src="${result.actor2_photo}" alt="${result.actor2_name}"><span>${result.actor2_name}</span></div>` : ''}
+                        ${result.actor3_name ? `<div class="search-result-actor"><img src="${result.actor3_photo}" alt="${result.actor3_name}"><span>${result.actor3_name}</span></div>` : ''}
+                        ${result.actor4_name ? `<div class="search-result-actor"><img src="${result.actor4_photo}" alt="${result.actor4_name}"><span>${result.actor4_name}</span></div>` : ''}
+                        ${result.actor5_name ? `<div class="search-result-actor"><img src="${result.actor5_photo}" alt="${result.actor5_name}"><span>${result.actor5_name}</span></div>` : ''}
+                    </div>
+                `;
+                item.onclick = () => {
+                    window.location.href = `/movie.html?id=${result.id}`;
+                };
+                searchResults.appendChild(item);
+            });
+
+            searchResults.style.display = 'block';
+        });
+}
+        function changeLanguage() {
+            const lang = document.getElementById('languageSelect').value;
+            const titleSection = document.getElementById('titleSection');
+
+            if (lang === 'tr') {
+                titleSection.textContent = 'Bu hafta IMDB\'de Top 10';
+            } else {
+                titleSection.textContent = 'Top 10 on IMDB this week';
+            }
+        }
+
+        let scrollAmount = 0;
+        function slide(direction) {
+            const movieContainer = document.getElementById('movieContainer');
+            const containerWidth = movieContainer.clientWidth;
+            const scrollDistance = 800; // Kaydırma mesafesi artırıldı
+
+            if (direction === 'left') {
+                scrollAmount = Math.max(scrollAmount - scrollDistance, 0);
+            } else if (direction === 'right') {
+                scrollAmount = Math.min(scrollAmount + scrollDistance, movieContainer.scrollWidth - containerWidth);
+            }
+
+            movieContainer.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+    </script>
+</body>
+</html>
